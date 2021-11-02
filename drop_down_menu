@@ -1,0 +1,145 @@
+import 'package:flutter/material.dart';
+
+import '../constants/app_colors.dart';
+
+class DropDownButtonWidget<T> extends StatefulWidget {
+  final List<T?>? items;
+  final Function(T?)? itemBuilder;
+  final T? value;
+  final Function(T?)? onChanged;
+  final String? hintTextMessage;
+
+  const DropDownButtonWidget(
+
+      {Key? key,
+        this.items,
+        this.itemBuilder,
+        this.value,
+        this.onChanged,
+        this.hintTextMessage,
+     })
+      : super(key: key);
+  @override
+  _DropDownButtonWidgetState<T> createState() =>
+      _DropDownButtonWidgetState<T>();
+}
+
+class _DropDownButtonWidgetState<T> extends State<DropDownButtonWidget<T>> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: AppColors.borderTextField, width: 1)),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<T>(
+          hint: Text(
+            widget.hintTextMessage ?? '',
+            style: TextStyle(
+                color: AppColors.mainTextColor,
+                fontSize: 14,
+                letterSpacing: 0.2),
+          ),
+          value: widget.value,
+          isExpanded: true,
+          icon: Icon(Icons.keyboard_arrow_down, size: 16),
+          onChanged:(val){
+            widget.onChanged!(val);
+          },
+          style: TextStyle(
+            color: AppColors.mainTextColor,
+            fontSize: 14,
+            letterSpacing: 0.2,
+          ),
+          items: widget.items?.map<DropdownMenuItem<T>>((value) {
+            return DropdownMenuItem<T>(
+              value: value,
+              child: widget.itemBuilder!(value),
+            );
+          }).toList()  ?? [],
+        ),
+      ),
+    );
+  }
+}
+
+class DropDownButtonForm<T> extends StatefulWidget {
+  final List<T?>? items;
+  final Function(T?)? itemBuilder;
+  final T? value;
+  final Function(T?)? onChanged;
+  final String? hintTextMessage;
+  final String? label;
+  final Function(T?)? validator;
+
+  const DropDownButtonForm(
+
+      {Key? key,
+        this.validator,
+        this.items,
+        this.itemBuilder,
+        this.value,
+        this.onChanged,
+        this.hintTextMessage,
+        this.label,
+      })
+      : super(key: key);
+  @override
+  _DropDownButtonFormState<T> createState() => _DropDownButtonFormState<T>();
+}
+
+class _DropDownButtonFormState<T> extends State<DropDownButtonForm<T>> {
+  @override
+  Widget build(BuildContext context) {
+    Color colorBorder = Color(0xFFe7e7e7);
+    Color colorError = AppColors.errorTextColor;
+    TextStyle hintStyle = TextStyle(
+        color: AppColors.mainTextColor, fontSize: 14, letterSpacing: 0.2);
+    return Container(
+      child: DropdownButtonFormField<T>(
+        isExpanded: true,
+        items: widget.items?.map<DropdownMenuItem<T>>((value) {
+          return DropdownMenuItem<T>(
+            value: value,
+            child: widget.itemBuilder!(value),
+          );
+        }).toList() ?? [],
+        onChanged: (val){
+          widget.onChanged!(val);
+        },
+        value: widget.value,
+        style: TextStyle(
+          color: AppColors.mainTextColor,
+          fontSize: 14,
+          letterSpacing: 0.2,
+        ),
+        decoration: InputDecoration(
+          hintText: widget.hintTextMessage,
+          hintStyle: hintStyle,
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          labelText: widget.hintTextMessage,
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4),
+            borderSide: BorderSide(color: colorBorder),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4),
+            borderSide: BorderSide(color: colorBorder),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4),
+            borderSide: BorderSide(color: colorError),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4),
+            borderSide: BorderSide(color: colorError),
+          ),
+        ),
+        validator: (val){
+          widget.itemBuilder!(val);
+        },
+      ),
+    );
+  }
+}
